@@ -1,0 +1,32 @@
+<resources>
+    <!-- Base application theme (Material3) -->
+    <style name="Theme.CamOBS" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/md_sys_color_primary</item>
+        <item name="colorPrimaryVariant">@color/md_sys_color_primary_container</item>
+        <item name="colorOnPrimary">@color/md_sys_color_on_primary</item>
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/md_sys_color_secondary</item>
+        <item name="colorSecondaryVariant">@color/md_sys_color_secondary_container</item>
+        <item name="colorOnSecondary">@color/md_sys_color_on_secondary</item>
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <!-- Shape appearance -->
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.CamOBS.MediumComponent</item>
+    </style>
+
+    <!-- Custom shape for cards/buttons -->
+    <style name="ShapeAppearance.CamOBS.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <!-- Splash theme -->
+    <style name="Theme.CamOBS.Splash" parent="Theme.CamOBS">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>

@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">CamOBS</string>
+    <string name="app_name_short">CamOBS</string>
+
+    <!-- UI Strings -->
+    <string name="title_stream_config">Configuración de Stream</string>
+    <string name="label_srt_url">URL SRT</string>
+    <string name="hint_srt_url">srt://192.168.1.100:8888?mode=caller</string>
+    <string name="label_resolution">Resolución</string>
+    <string name="label_fps">FPS</string>
+    <string name="label_bitrate">Bitrate (Kbps)</string>
+    <string name="label_camera">Cámara</string>
+    <string name="btn_start_stream">Iniciar Stream</string>
+    <string name="btn_stop_stream">Detener Stream</string>
+    <string name="status_idle">Listo</string>
+    <string name="status_connecting">Conectando…</string>
+    <string name="status_streaming">Streaming activo</string>
+    <string name="status_error">Error</string>
+    <string name="pref_camera_front">Frontal</string>
+    <string name="pref_camera_back">Trasera</string>
+    <string name="pref_camera_external">Externa</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ajustes</string>
+    <string name="pref_advanced_title">Avanzado</string>
+    <string name="pref_codec_title">Codec de video</string>
+    <string name="pref_codec_h264">H.264 (AVC)</string>
+    <string name="pref_codec_h265">H.265 (HEVC)</string>
+    <string name="pref_keyframe_interval">Intervalo keyframe (s)</string>
+    <string name="pref_latency_mode">Modo latencia</string>
+    <string name="pref_latency_ultra">Ultra-baja</string>
+    <string name="pref_latency_low">Baja</string>
+    <string name="pref_latency_balanced">Equilibrado</string>
+
+    <!-- Permissions -->
+    <string name="permission_camera_rationale">Se necesita acceso a la cámara para transmitir video</string>
+    <string name="permission_mic_rationale">Se necesita acceso al micrófono para transmitir audio</string>
+    <string name="permission_notification_rationale">Notificaciones para mostrar estado del stream en foreground</string>
+
+    <!-- Errors -->
+    <string name="error_camera_unavailable">Cámara no disponible</string>
+    <string name="error_srt_connection_failed">Falló la conexión SRT</string>
+    <string name="error_encoding_failed">Error de codificación</string>
+    <string name="error_permission_denied">Permiso denegado</string>
+
+    <!-- Accessibility -->
+    <string name="preview_content_description">Vista previa de la cámara</string>
+    <string name="settings_button_description">Abrir ajustes</string>
+</resources>
