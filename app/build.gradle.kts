@@ -1,16 +1,3 @@
-import java.io.FileInputStream
-import java.util.Properties
-
-// Cargar keystore.properties para signing release
-private val keystoreProperties: Properties by lazy {
-    val props = Properties()
-    val file = rootProject.file("keystore.properties")
-    if (file.exists()) {
-        FileInputStream(file).use { props.load(it) }
-    }
-    props
-}
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -31,33 +18,11 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    signingConfigs {
-        create("release") {
-            val storeFile = keystoreProperties["signingStoreFile"]?.toString()
-            val storePassword = keystoreProperties["signingStorePassword"]?.toString()
-            val keyAlias = keystoreProperties["signingKeyAlias"]?.toString()
-            val keyPassword = keystoreProperties["signingKeyPassword"]?.toString()
-
-            if (storeFile != null && storePassword != null && keyAlias != null && keyPassword != null) {
-                storeFile = rootProject.file(storeFile)
-                storePassword = storePassword
-                keyAlias = keyAlias
-                keyPassword = keyPassword
-            } else {
-                // Fallback para CI: usar variables de entorno (GitHub Secrets)
-                storeFile = System.getenv("SIGNING_STORE_FILE")?.let { rootProject.file(it) }
-                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
-                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
-            }
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            // signingConfig se configura solo si existe keystore.properties local
         }
         debug {
             isMinifyEnabled = false
@@ -144,8 +109,7 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.accompanist.systemuicontroller)
 
-    // SRT - using prebuilt libsrt via JNI
-    // We'll bundle libsrt.so for arm64-v8a and armeabi-v7a
+    // SRT - usar implementación local (ver settings.gradle.kts para repositorio)
     implementation("com.github.fyhertz.libsrt:libsrt-android:1.5.3")
 
     // Testing
