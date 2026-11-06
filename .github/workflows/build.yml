@@ -1,0 +1,167 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # Permite ejecutar manualmente desde la web
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 1. Checkout código
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Configurar Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      # 3. Configurar Android SDK
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          ndk-version: r26d
+          cmdline-tools-version: 'latest'
+          licenses: 'all'
+
+      # 4. Cache Gradle dependencies
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 5. Hacer ejecutable gradlew
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # 6. Compilar APK Debug
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      # 7. Verificar que se generó el APK
+      - name: Verify APK
+        run: |
+          APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
+          if [ -f "$APK_PATH" ]; then
+            echo "APK encontrado: $APK_PATH"
+            ls -lh "$APK_PATH"
+          else
+            echo "ERROR: APK no encontrado"
+            find app/build -name "*.apk" 2>/dev/null
+            exit 1
+          fi
+
+      # 8. Subir APK como artifact (descargable desde Actions)
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: CamOBS-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+          if-no-files-found: error
+
+      # 9. Subir también mapping.txt para debug de crashes (opcional)
+      - name: Upload ProGuard mapping
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: CamOBS-mapping
+          path: app/build/outputs/mapping/debug/mapping.txt
+          retention-days: 7
+
+  # Job opcional: Build Release (requiere configurar signing)
+  build-release:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')  # Solo en tags v*
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: actions/setup-android@v3
+        with:
+          api-level: 34
+          licenses: 'all'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        env:
+          # Estas variables se configuran en Settings > Secrets
+          ORG_GRADLE_PROJECT_signingKeyAlias: ${{ secrets.SIGNING_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_signingKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingStorePassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingStoreFile: ${{ secrets.SIGNING_STORE_FILE }}
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: CamOBS-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 90
+
+  # Job: Crear Release en GitHub cuando se pushea un tag
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: build-release
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: CamOBS-release-apk
+          path: ./release
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./release/app-release.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

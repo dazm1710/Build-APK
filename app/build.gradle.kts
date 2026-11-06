@@ -5,6 +5,19 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+import java.io.FileInputStream
+import java.util.Properties
+
+// Cargar keystore.properties para signing release
+private val keystoreProperties: Properties by lazy {
+    val props = Properties()
+    val file = rootProject.file("keystore.properties")
+    if (file.exists()) {
+        FileInputStream(file).use { props.load(it) }
+    }
+    props
+}
+
 android {
     namespace = "com.camobs"
     compileSdk = 34
@@ -16,6 +29,28 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        create("release") {
+            val storeFile = keystoreProperties["signingStoreFile"]?.toString()
+            val storePassword = keystoreProperties["signingStorePassword"]?.toString()
+            val keyAlias = keystoreProperties["signingKeyAlias"]?.toString()
+            val keyPassword = keystoreProperties["signingKeyPassword"]?.toString()
+
+            if (storeFile != null && storePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = rootProject.file(storeFile)
+                storePassword = storePassword
+                keyAlias = keyAlias
+                keyPassword = keyPassword
+            } else {
+                // Fallback para CI: usar variables de entorno (GitHub Secrets)
+                storeFile = System.getenv("SIGNING_STORE_FILE")?.let { rootProject.file(it) }
+                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {

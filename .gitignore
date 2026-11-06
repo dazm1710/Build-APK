@@ -1,0 +1,55 @@
+# Gradle
+.gradle/
+build/
+*/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+local.properties
+*.keystore
+*.jks
+*.jceks
+*.bak
+*.log
+
+# Kotlin
+*.klib
+
+# Generated
+generated/
+out/
+production/
+captures/
+*.hprof
+
+# Test
+test-results/
+coverage/
+
+# Keystores (never commit!)
+keystore.properties
+signing.properties
+
+# SRT native libs (downloaded by JitPack)
+*.so
+
+# Sensitive
+*.properties
+!gradle.properties
