@@ -1,8 +1,15 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
+    id("com.android.application") version "8.5.2" apply false
+    id("org.jetbrains.kotlin.android") version "2.0.20" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20" apply false
+    id("com.google.devtools.ksp") version "2.0.20-1.0.14" apply false
+}
+
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -20,9 +27,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // signingConfig se configura solo si existe keystore.properties local
         }
         debug {
             isMinifyEnabled = false
@@ -48,7 +54,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
 
     packagingOptions {
@@ -64,64 +70,64 @@ android {
 
 dependencies {
     // Core Android & Kotlin
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.kotlin.stdlib)
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("androidx.activity:activity-compose:1.9.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.20")
 
-    // Compose (via BOM)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.material.icons.extended)
-    implementation(libs.compose.runtime)
-    implementation(libs.compose.ui.tooling)
-    implementation(libs.compose.ui.tooling.preview)
+    // Compose
+    implementation(platform("androidx.compose:compose-bom:2024.09.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.ui:ui-tooling")
+    implementation("androidx.compose.ui:ui-tooling-preview")
 
     // CameraX
-    implementation(libs.camerax.core)
-    implementation(libs.camerax.camera2)
-    implementation(libs.camerax.lifecycle)
-    implementation(libs.camerax.view)
-    implementation(libs.camerax.video)
+    implementation("androidx.camera:camera-core:1.4.0")
+    implementation("androidx.camera:camera-camera2:1.4.0")
+    implementation("androidx.camera:camera-lifecycle:1.4.0")
+    implementation("androidx.camera:camera-view:1.4.0")
+    implementation("androidx.camera:camera-video:1.4.0")
 
-    // Media3 (MediaCodec utilities)
-    implementation(libs.media3.common)
-    implementation(libs.media3.exoplayer)
+    // Media3
+    implementation("androidx.media3:media3-common:1.5.1")
+    implementation("androidx.media3:media3-exoplayer:1.5.1")
 
     // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    // Ktor (for config API calls)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.serialization.kotlinx)
-    implementation(libs.kotlinx.serialization.json)
+    // Ktor
+    implementation("io.ktor:ktor-client-core:3.0.0")
+    implementation("io.ktor:ktor-client-android:3.0.0")
+    implementation("io.ktor:ktor-serialization-kotlinx:3.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     // Hilt DI
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
+    implementation("com.google.dagger:hilt-android:2.50")
+    ksp("com.google.dagger:hilt-compiler:2.50")
+    implementation("androidx.hilt:hilt-navigation-compose:2.50")
 
     // Accompanist
-    implementation(libs.accompanist.permissions)
-    implementation(libs.accompanist.systemuicontroller)
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
 
-    // SRT - usar implementación local (ver settings.gradle.kts para repositorio)
+    // SRT - JitPack
     implementation("com.github.fyhertz.libsrt:libsrt-android:1.5.3")
 
     // Testing
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.truth)
-    testImplementation(libs.robolectric)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-    androidTestImplementation(libs.androidx.test.rules)
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.ui.tooling.preview)
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("org.robolectric:robolectric:4.11")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:rules:1.6.0")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-tooling-preview")
 }
 
 ksp {
