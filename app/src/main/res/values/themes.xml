@@ -1,6 +1,6 @@
 <resources>
-    <!-- Base application theme (Material3) -->
-    <style name="Theme.CamOBS" parent="Theme.Material3.Dark.NoActionBar">
+    <!-- Base application theme (AppCompat - no XML Material3 needed for Compose) -->
+    <style name="Theme.CamOBS" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Primary brand color -->
         <item name="colorPrimary">@color/md_sys_color_primary</item>
         <item name="colorPrimaryVariant">@color/md_sys_color_primary_container</item>
@@ -14,14 +14,8 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
-        <!-- Shape appearance -->
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.CamOBS.MediumComponent</item>
-    </style>
-
-    <!-- Custom shape for cards/buttons -->
-    <style name="ShapeAppearance.CamOBS.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>
+        <!-- Window background -->
+        <item name="android:windowBackground">@color/md_sys_color_background</item>
     </style>
 
     <!-- Splash theme -->
