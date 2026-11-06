@@ -1,10 +1,3 @@
-plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
-}
-
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -16,6 +9,13 @@ private val keystoreProperties: Properties by lazy {
         FileInputStream(file).use { props.load(it) }
     }
     props
+}
+
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
